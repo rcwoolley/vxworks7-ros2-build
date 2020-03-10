@@ -39,7 +39,7 @@ PKG_BUILD_DIR = build
 PKG_SRC_DIR = asio-asio-1-12-0/asio
 PKG_PATCH_DIR = files
 
-PKG_LIBS := -lunix -lnet
+# PKG_LIBS := -lunix -lnet
 
 PKG_CONFIGURE_OPT = $(TGT_CONFIGURE_OPT) LIBS="$(PKG_LIBS)"
 PKG_CONFIGURE_OPT += --without-boost
