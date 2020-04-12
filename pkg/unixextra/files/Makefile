@@ -27,13 +27,23 @@ include $(WIND_USR_MK)/defs.common.mk
 
 SOURCES := $(wildcard $(srcdir)/*.c)
 OBJECTS := $(SOURCES:.c=.o)
+SHOBJECTS := $(SOURCES:.c=.sho)
 
 CC_FLAGS = -g
 
-all: libunixextra.a libunixextra.so
+all: cp_headers libunixextra.a libunixextra.so
 
-libunixextra.so: $(OBJECTS)
+cp_headers:
+	install -m 644 $(srcdir)/termios.h $(WIND_CC_SYSROOT)/usr/h/published/UTILS_UNIX
+	install -m 644 $(srcdir)/ttycom.h $(WIND_CC_SYSROOT)/usr/h/published/UTILS_UNIX/sys
+	sed -i 's/_WRS_INLINE/inline/g'  $(WIND_CC_SYSROOT)/usr/h/public/endian.h
+	sed -i 's/STATUS/int/g' `find $(WIND_CC_SYSROOT)/usr/h -name stat.h`
+
+libunixextra.so: $(SHOBJECTS)
 	$(CC) -shared $^ -o $@ $(CC_FLAGS)
+
+%.sho: %.c
+	$(CC) -fpic -c $< -o $@ $(CC_FLAGS)
 
 libunixextra.a: $(OBJECTS)
 	$(AR) rcs $@ $^
@@ -49,9 +59,6 @@ install:
 	install -m 644 $(srcdir)/string.h $(WIND_CC_SYSROOT)/usr/h/published/UTILS_UNIX
 	install -m 755 libunixextra.a $(WIND_CC_SYSROOT)/usr/lib/common
 	install -m 755 libunixextra.so $(WIND_CC_SYSROOT)/usr/lib/common
-	sed -i 's/-lunix -lregex/-lunix -lunixextra -lregex/g' `which $(CC)`
-	sed -i 's/-lunix -lregex/-lunix -lunixextra -lregex/g' `which $(CXX)`
 	install -m 755 libunixextra.so $(ROOT_DIR)/lib/.
-	sed -i 's/SONAME_FOUND=false/SONAME_FOUND=true/g' `which $(CC)`
-	sed -i 's/SONAME_FOUND=false/SONAME_FOUND=true/g' `which $(CXX)`
+	sed -i 's/-lunix -lregex/-lunix -lunixextra -lregex/g' $(WIND_SDK_TOOLKIT_INCLUDE)/cc-conf/default.conf
 

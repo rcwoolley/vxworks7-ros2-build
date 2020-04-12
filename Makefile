@@ -9,14 +9,14 @@ DEFAULT_BUILD ?= unixextra asio tinyxml2 ros2 turtlebot3
 
 ## Add missing variablse from SDK
 export TOOL=llvm
-export TGT_ARCH=$(shell echo $$CC | cut -d "-" -f 1)
+export TGT_ARCH=$(shell $$CC -print-target-triple -c dummy.c | sed -e 's/arm64/aarch64/g')
 export CMAKE_MODULE_PATH=$(CMAKE_MODULE_DIR)
 ## XX
 
 .PHONY: clean_buildstamps
 
 all: $(DOWNLOADS_DIR) $(STAMP_DIR) $(EXPORT_DIR)
-	for p in $(DEFAULT_BUILD); do $(MAKE) -C pkg/$$p $$p.install; done;
+	for p in $(DEFAULT_BUILD); do $(MAKE) -C pkg/$$p $$p.install || exit 1; done;
 
 $(EXPORT_DIR):
 	@mkdir -p $(ROOT_DIR)/lib
