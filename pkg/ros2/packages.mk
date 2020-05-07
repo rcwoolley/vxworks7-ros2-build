@@ -78,9 +78,9 @@ ROS2_EXAMPLES=examples_rclcpp_minimal_action_client \
 	examples_rclcpp_minimal_service \
 	examples_rclcpp_minimal_timer
 
-ROS2_PYTHON_TOOLS=ros2action ros2component ros2msg ros2node ros2pkg \
-	ros2service ros2topic ros2cli ros2lifecycle ros2multicast ros2param \
-	ros2run ros2srv
+ROS2_PYTHON_TOOLS=ros2action ros2cli ros2component ros2doctor ros2interface \
+	ros2lifecycle ros2multicast ros2node ros2param ros2pkg ros2run \
+	ros2service ros2topic
 
 PKG_PKGS_UP_TO=$(ROS2_EXAMPLES) \
 	$(ROS2_PYTHON_TOOLS) \

@@ -33,13 +33,13 @@ PKG_NAME = ros2
 PKG_VER =  dashing
 
 PKG_FILE_NAME=${PKG_NAME}.repos
-PKG_COMMIT_ID = dashing-release
+PKG_COMMIT_ID = master
 PKG_URL = https://raw.githubusercontent.com/ros2/ros2/${PKG_COMMIT_ID}/${PKG_FILE_NAME}
 # custom pkg type
 PKG_TYPE = repos
 
 PKG_URL2 = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
-PKG_COMMIT_ID2 = dashing-release-SR0640
+PKG_COMMIT_ID2 = foxy-SR0640
 PKG_SRC_DIR2 = patches
 
 PKG_LICENSE = BSD
@@ -54,10 +54,11 @@ PKG_BUILD_TYPE := Debug
 
 ros2.patch: ros2.unpack
 	@$(call echo_action,Patching,$*)
-	$(call fetch_git,$(PKG_NAME),$(PKG_URL2))
-	$(call clone_git,$(PKG_NAME),$(PKG_URL2),$(PKG_COMMIT_ID2),$(PKG_SRC_DIR2))
-	$(call patch_repos,$(ROS2_PATCH_DIRS),$(PKG_SRC_DIR2))
 	@$(MAKE_STAMP)
+
+#	$(call fetch_git,$(PKG_NAME),$(PKG_URL2))
+#	$(call clone_git,$(PKG_NAME),$(PKG_URL2),$(PKG_COMMIT_ID2),$(PKG_SRC_DIR2))
+#	$(call patch_repos,$(ROS2_PATCH_DIRS),$(PKG_SRC_DIR2))
 
 ros2.configure: ros2.patch
 	@$(call echo_action,Configuring,$*)
