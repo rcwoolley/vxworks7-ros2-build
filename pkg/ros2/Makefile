@@ -24,62 +24,45 @@
 include $(WIND_USR_MK)/defs.common.mk
 include $(WIND_USR_MK)/defs.packages.mk
 include $(WIND_USR_MK)/defs.crossbuild.mk
+include $(3PP_USR_MK)/defs.colcon.mk
+include $(PACKAGE_DIR)/ros2/packages.mk
 
 PACKAGES += ros2
 
 PKG_NAME = ros2
 PKG_VER =  dashing
 
-#PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
-PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
-PKG_TYPE = git
-PKG_COMMIT_ID = dashing-release-SR0640
+PKG_FILE_NAME=${PKG_NAME}.repos
+PKG_COMMIT_ID = dashing-release
+PKG_URL = https://raw.githubusercontent.com/ros2/ros2/${PKG_COMMIT_ID}/${PKG_FILE_NAME}
+# custom pkg type
+PKG_TYPE = repos
 
-PKG_REPO_COMMIT_ID = dashing-release
-PKG_REPO_URL = https://raw.githubusercontent.com/ros2/ros2/${PKG_REPO_COMMIT_ID}/${PKG_NAME}.repos
+PKG_URL2 = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
+PKG_COMMIT_ID2 = dashing-release-SR0640
+PKG_SRC_DIR2 = patches
 
 PKG_LICENSE = BSD
 
 PKG_BUILD_DIR = ros2_ws
-PKG_SRC_DIR = patches
+# ros2.download
+PKG_DOWNLOAD = fetch_archive
+# ros2.unpack
+PKG_UNPACK = unpack_repos
 
 PKG_BUILD_TYPE := Debug
 
-include $(PACKAGE_DIR)/ros2/packages.mk
-
-define ros2_patch
-        for pn in $(1); do \
-	        N=$$(basename $$pn); \
-                if ls $(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/$$N/usr_src/0001-* 1> /dev/null 2>&1; then \
-                        PATCHES="$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/$$N/usr_src/*.patch"; \
-                        for PATCH in $$PATCHES; do \
-                                cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR)/src/$$pn ; \
-                                $(PATCH) -p1 < $$PATCH ; \
-                        done; \
-                fi \
-	done;
-endef
-
-ros2.unpack: ros2.download
-	@$(call echo_action,Unpacking,$*)
-	$(call pkg_unpack,$(PKG_NAME))
-	mkdir -p $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
-	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
-	curl -o $(PKG_NAME).repos $(PKG_REPO_URL); \
-	mkdir src; \
-	vcs import src < $(PKG_NAME).repos
-	@$(MAKE_STAMP)
-
 ros2.patch: ros2.unpack
 	@$(call echo_action,Patching,$*)
-	$(call ros2_patch,$(ROS2_PATCH_DIRS))
+	$(call fetch_git,$(PKG_NAME),$(PKG_URL2))
+	$(call clone_git,$(PKG_NAME),$(PKG_URL2),$(PKG_COMMIT_ID2),$(PKG_SRC_DIR2))
+	$(call patch_repos,$(ROS2_PATCH_DIRS),$(PKG_SRC_DIR2))
 	@$(MAKE_STAMP)
 
 ros2.configure: ros2.patch
 	@$(call echo_action,Configuring,$*)
-	for i in $(ROS_IGNORE_DIRS); do \
-		touch $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR)/src/$$i/COLCON_IGNORE; \
-	done;
+	$(call ignore_repos,$(ROS_IGNORE_DIRS))
+	@$(call echo_action,Installing build dependencies,$*)
 	pip3 install numpy;
 	pip3 install lark-parser;
 	@$(MAKE_STAMP)
@@ -100,7 +83,7 @@ ros2.build: ros2.configure
 	@$(MAKE_STAMP)
 
 ros2.install : ros2.build
-	@$(call echo_action,Installing dependencies,$*)
+	@$(call echo_action,Installing run-time dependencies,$*)
 	pip3 install --ignore-installed --prefix=$(WIND_CC_SYSROOT)/usr/3pp/develop/usr setuptools
 	pip3 install --ignore-installed --prefix=$(WIND_CC_SYSROOT)/usr/3pp/develop/usr catkin_pkg
 	@$(call echo_action,Installing,$*)
