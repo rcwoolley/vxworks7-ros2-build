@@ -22,6 +22,7 @@
 include $(WIND_USR_MK)/defs.common.mk
 include $(WIND_USR_MK)/defs.packages.mk
 include $(WIND_USR_MK)/defs.crossbuild.mk
+include files/defs.colcon.mk
 
 PACKAGES += colcon
 
@@ -33,24 +34,13 @@ PKG_COMMIT_ID = 8ce711f4c47bd3336e3f24f685e8b481d2bbcfe7
 PKG_URL = https://raw.githubusercontent.com/colcon/colcon.readthedocs.org/$(PKG_COMMIT_ID)/$(PKG_FILE_NAME)
 PKG_FILE_NAME2 = requirements.txt
 PKG_URL2 = https://raw.githubusercontent.com/colcon/colcon.readthedocs.org/$(PKG_COMMIT_ID)/$(PKG_FILE_NAME2)
-PKG_TYPE = unpack
+PKG_TYPE = repos
 
 PKG_LICENSE = BSD
 
 PKG_BUILD_DIR = colcon_ws
-
-colcon.unpack: colcon.download
-	@$(call echo_action,Unpacking,$*)
-	$(call pkg_unpack,$(PKG_NAME))
-	mkdir -p $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
-	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
-	mkdir src; \
-	vcs import src < $(DOWNLOADS_DIR)/$(PKG_NAME).repos
-	@$(MAKE_STAMP)
-
-colcon.patch: colcon.unpack
-	@$(call echo_action,Patching,$*)
-	@$(MAKE_STAMP)
+PKG_DOWNLOAD = fetch_archive
+PKG_UNPACK = unpack_repos
 
 colcon.configure: colcon.patch
 	@$(call echo_action,Configuring,$*)
@@ -67,7 +57,8 @@ colcon.build: colcon.configure
 
 colcon.install : colcon.build
 	@$(call echo_action,Installing,$*)
+	mkdir -p $(3PP_USR_MK) ;
+	install -m 644 files/defs.colcon.mk $(3PP_USR_MK)/ ;
 	@$(MAKE_STAMP)
 
 include $(WIND_USR_MK)/rules.packages.mk
-
