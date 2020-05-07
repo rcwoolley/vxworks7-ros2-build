@@ -117,32 +117,32 @@ stringify_url=$(subst *,.,$(subst /,.,$(subst :,.,$1)))
 
 define clone_git
 	$(ECHO) "clone_git $1" ; \
-	GIT_DIR_NAME=$(call stringify_url,$(PKG_URL)) ; \
+	GIT_DIR_NAME=$(call stringify_url,$(2)) ; \
 	mkdir -p $(BUILD_DIR)/$(1); \
-	if [ ! -d $(BUILD_DIR)/$(1)/$(PKG_SRC_DIR) ] ; then \
+	if [ ! -d $(BUILD_DIR)/$(1)/$(4) ] ; then \
 		cd $(BUILD_DIR)/$(1) && \
-		LANG=C git clone $(DOWNLOADS_DIR)/$$GIT_DIR_NAME $(PKG_SRC_DIR) --progress ; \
-		if [ -n "$(PKG_COMMIT_ID)" ]; then \
-			cd $(BUILD_DIR)/$(1)/$(PKG_SRC_DIR) && \
-			LANG=C git checkout $(PKG_COMMIT_ID); \
+		LANG=C git clone $(DOWNLOADS_DIR)/$$GIT_DIR_NAME $(4) --progress ; \
+		if [ -n "$(3)" ]; then \
+			cd $(BUILD_DIR)/$(1)/$(4) && \
+			LANG=C git checkout $(3); \
 		fi ; \
 	else \
-		$(ECHO) "$(BUILD_DIR)/$(1)/$(PKG_SRC_DIR) already exists." ; \
+		$(ECHO) "$(BUILD_DIR)/$(1)/$(4) already exists." ; \
 		exit 1 ; \
 	fi
 endef
 
 define fetch_git
 	$(ECHO) "fetch_git $1" ; \
-	GIT_DIR_NAME=$(call stringify_url,$(PKG_URL)) ; \
+	GIT_DIR_NAME=$(call stringify_url,$(2)) ; \
 	mkdir -p $(BUILD_DIR)/$(1); \
 	if [ ! -d $(DOWNLOADS_DIR)/$$GIT_DIR_NAME ] ; then \
 		cd $(DOWNLOADS_DIR) &&  \
-		echo LANG=C git clone --bare --mirror $(PKG_URL) $(DOWNLOADS_DIR)/$$GIT_DIR_NAME --progress ; \
-		LANG=C git clone --bare --mirror $(PKG_URL) $(DOWNLOADS_DIR)/$$GIT_DIR_NAME --progress ; \
+		echo LANG=C git clone --bare --mirror $(2) $(DOWNLOADS_DIR)/$$GIT_DIR_NAME --progress ; \
+		LANG=C git clone --bare --mirror $(2) $(DOWNLOADS_DIR)/$$GIT_DIR_NAME --progress ; \
 	else \
 		cd $(DOWNLOADS_DIR)/$$GIT_DIR_NAME &&  \
-	        LANG=C git fetch -f --prune --progress $(PKG_URL) refs/*:refs/* ; \
+	        LANG=C git fetch -f --prune --progress $(2) refs/*:refs/* ; \
 	fi
 endef
 
@@ -223,12 +223,12 @@ endef
 
 define pkg_unpack
 	case "$(PKG_TYPE)" in \
-		git) $(call clone_git,$(1)) ;; \
+		git) $(call clone_git,$(1),$(PKG_URL),$(PKG_COMMIT_ID),$(PKG_SRC_DIR)) ;; \
 		hg) $(call clone_hg,$(1)) ;; \
 		cvs) $(call copy_cvs,$(1)) ;; \
 		svn) $(call copy_svn,$(1)) ;; \
 		unpack) $(call unpack_archive,$(1)) ;; \
-		*) $(OTHER_UNPACK) ;; \
+		*) $(call $(PKG_UNPACK),$(1)) ;; \
 	esac
 endef
 
@@ -273,7 +273,7 @@ define pkg_download
 	cd $(DOWNLOADS_DIR); \
 	case "$(PKG_TYPE)" in \
 		svn) $(call fetch_svn,$(1)) ;; \
-		git) $(call fetch_git,$(1)) ;; \
+		git) $(call fetch_git,$(1),$(PKG_URL)) ;; \
 		hg) $(call fetch_hg,$(1)) ;; \
 		cvs) $(call fetch_cvs,$(1)) ;; \
 		unpack) $(call fetch_archive,$(1)) ;; \
