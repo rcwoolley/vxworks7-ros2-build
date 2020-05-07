@@ -243,7 +243,8 @@ define fetch_archive
 			            $(PKG_FILE_NAME)) ;; \
 			ftp://*) $(call fetch_ftp,$(PKG_NAME),$(PKG_URL), \
 			            $(PKG_FILE_NAME)) ;; \
-			*) $(OTHER_CHECKOUT) ;; \
+			*) $(call $(PKG_FETCH),$(PKG_NAME),$(PKG_URL), \
+				     $(PKG_FILE_NAME));; \
 		esac ; \
 	fi ; \
 	sleep 1 ; \
@@ -276,7 +277,7 @@ define pkg_download
 		hg) $(call fetch_hg,$(1)) ;; \
 		cvs) $(call fetch_cvs,$(1)) ;; \
 		unpack) $(call fetch_archive,$(1)) ;; \
-		*) $(OTHER_CHECKOUT) ;; \
+		*) $(call $(PKG_DOWNLOAD),$(1)) ;; \
 	esac
 endef
 

@@ -30,8 +30,9 @@ MAKE_STAMP        = $(TOUCH) $(STAMP_DIR)/$@
 CLEAN_STAMP       = $(RM) -f $(STAMP_DIR)/$*.build $(STAMP_DIR)/$*.install
 DISTCLEAN_STAMP   = $(RM) -f $(STAMP_DIR)/$*.*
 
-OTHER_UNPACK ?= $(ECHO) "ERROR: Unknown source type, can't extract" ; exit 1
-OTHER_CHECKOUT ?= $(ECHO) "ERROR: Unknown protocol type, can't checkout" ; exit 1
+PKG_UNPACK ?= $(ECHO) "ERROR: Unknown source type: $(PKG_TYPE), can't unpack" ; exit 1
+PKG_DOWNLOAD ?= $(ECHO) "ERROR: Unknown package type: $(PKG_TYPE), can't download" ; exit 1
+PKG_FETCH ?= $(ECHO) "ERROR: Unknown package type: $(PKG_TYPE), can't fetch" ; exit 1
 
 #PKG_PATCHES := $(sort $(wildcard *.patch))
 BUILD_SYS_FILES = vxworks.make vxworks.mak vxworks.rtp.mak vxworks.lib.mak vxworks.krnl.mak config.vx.app
