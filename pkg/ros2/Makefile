@@ -33,7 +33,7 @@ PKG_VER =  dashing
 #PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
 PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
 PKG_TYPE = git
-PKG_COMMIT_ID = dashing-release-SR0620
+PKG_COMMIT_ID = dashing-release-SR0640
 
 PKG_REPO_COMMIT_ID = dashing-release
 PKG_REPO_URL = https://raw.githubusercontent.com/ros2/ros2/${PKG_REPO_COMMIT_ID}/${PKG_NAME}.repos
@@ -53,12 +53,12 @@ define ros2_patch
                 if ls $(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/$$N/usr_src/0001-* 1> /dev/null 2>&1; then \
                         PATCHES="$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/$$N/usr_src/*.patch"; \
                         for PATCH in $$PATCHES; do \
-                                $(PATCH) -p1 -N -d $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR)/src/$$pn -p1 < $$PATCH ; \
+                                cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR)/src/$$pn ; \
+                                $(PATCH) -p1 < $$PATCH ; \
                         done; \
                 fi \
 	done;
 endef
-
 
 ros2.unpack: ros2.download
 	@$(call echo_action,Unpacking,$*)
@@ -84,14 +84,14 @@ ros2.configure: ros2.patch
 
 ros2.build: ros2.configure
 	@$(call echo_action,Building,$*)
-	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
-	export WIND_ROOT_DIR=$(ROOT_DIR); \
-	colcon build --symlink-install --cmake-force-configure --packages-up-to $(PKG_PKGS_UP_TO) \
+	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR) && \
+	colcon build --merge-install --install-base $(TGT_INSTALL_DIR) --cmake-force-configure --packages-up-to $(PKG_PKGS_UP_TO) \
 		--cmake-args \
                 -DCMAKE_BUILD_TYPE:STRING=$(PKG_BUILD_TYPE) \
                 -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-                -DCMAKE_MODULE_PATH:PATH=$(CMAKE_MODULE_DIR) \
-                -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$(CMAKE_MODULE_DIR)/rtp.cmake \
+		-DPYTHON_EXECUTABLE=/usr/bin/python3 \
+                -DCMAKE_PREFIX_PATH=$(TGT_INSTALL_DIR) \
+		-DCMAKE_TOOLCHAIN_FILE=$(TGT_CMAKE_TOOLCHAIN_FILE) \
                 -DBUILD_TESTING:BOOL=OFF
 	@$(MAKE_STAMP)
 
@@ -99,11 +99,11 @@ ros2.build: ros2.configure
 ros2.install : ros2.build
 	@$(call echo_action,Installing,$*)
 	@# copy PRJ libs and binaries to VSB
-	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR) && \
-	if [ -d install ]; then \
-		find install -name *.so* -exec install -m 644 {} $(ROOT_DIR)/lib/ \;; \
-		find install -name *.vxe -exec install -m 644 {} $(ROOT_DIR)/$(TOOL)/bin/ \;; \
-		find install -name *.urdf -exec install -m 755 {} $(ROOT_DIR)/$(TOOL)/bin/ \;; \
+	if [ -d $(TGT_INSTALL_DIR) ]; then \
+		mkdir -p $(TGT_DEPLOY_DIR)/lib; \
+		find $(TGT_INSTALL_DIR) -name *.so* -exec install -m 644 {} $(TGT_DEPLOY_DIR)/lib/ \;; \
+		find $(TGT_INSTALL_DIR)/lib/examples_rclcpp_minimal_* -type f -exec cp {} $(TGT_DEPLOY_DIR)/$(TOOL)/bin \;; \
+		find $(TGT_INSTALL_DIR) -name *.urdf -exec install -m 755 {} $(TGT_DEPLOY_DIR)/$(TOOL)/bin/ \;; \
 	fi
 	@$(MAKE_STAMP)
 
