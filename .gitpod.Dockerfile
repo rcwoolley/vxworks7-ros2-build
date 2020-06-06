@@ -1,5 +1,7 @@
 FROM gitpod/workspace-full
 
+USER root
+
 # setup timezone
 # RUN echo 'Etc/UTC' > /etc/timezone && \
 #     ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
@@ -59,3 +61,5 @@ RUN rosdep init \
 # clone source
 ENV ROS2_WS /opt/ros2_ws
 RUN mkdir -p $ROS2_WS/src
+
+USER gitpod
