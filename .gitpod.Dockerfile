@@ -66,7 +66,7 @@ RUN mkdir -p $ROS2_WS/src
 RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-lark-parser \
     lbzip2 \
-    qemu \
+    qemu-system-x86 \
     net-tools \
     uml-utilities \
     && rm -rf /var/lib/apt/lists/*
