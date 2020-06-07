@@ -64,14 +64,24 @@ RUN mkdir -p $ROS2_WS/src
 
 # download WRLabs SDK
 RUN apt-get update && apt-get install --no-install-recommends -y \
+    python3-lark-parser \
     lbzip2 \
+    qemu \
+    net-tools \
+    uml-utilities \
     && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/wrsdk
 ARG FILEID=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS
 ARG FILENAME=wrsdk-vxworks7-qemu-1.7.tar.bz2
 # RUN wget --no-check-certificate https://labs.windriver.com/downloads/$FILENAME -O /opt/wrsdk/$FILENAME
 RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS" -O /opt/wrsdk/$FILENAME && rm -rf /tmp/cookies.txt
-RUN tar xfv /opt/wrsdk/$FILENAME -C /opt --use-compress-program=lbzip2
-RUN chown -R gitpod:gitpod /opt/wrsdk-vxworks7-qemu
+
+# setup tap
+# RUN tunctl -u gitpod -t tap0
+# RUN ifconfig tap0 192.168.200.254 up
 
 USER gitpod
+
+# uncompress SDK
+RUN sudo chown -R gitpod:gitpod /opt/
+RUN tar xfv /opt/wrsdk/$FILENAME -C /opt --use-compress-program=lbzip2
