@@ -74,7 +74,11 @@ RUN mkdir -p /opt/wrsdk
 ARG FILEID=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS
 ARG FILENAME=wrsdk-vxworks7-qemu-1.7.tar.bz2
 # RUN wget --no-check-certificate https://labs.windriver.com/downloads/$FILENAME -O /opt/wrsdk/$FILENAME
-RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS" -O /opt/wrsdk/$FILENAME && rm -rf /tmp/cookies.txt
+# RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS" -O /opt/wrsdk/$FILENAME && rm -rf /tmp/cookies.txt
+RUN wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS' -O /tmp/warning.txt
+#ARG confirm=$(cat /tmp/warning.txt | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
+RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(cat /tmp/warning.txt | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1udiF9ImT28dKNDQWfLK0h_YgDhpRRAaS" -O /opt/wrsdk/$FILENAME
+RUN rm /tmp/cookies.txt /tmp/warning.txt
 
 # setup tap
 # RUN tunctl -u gitpod -t tap0
