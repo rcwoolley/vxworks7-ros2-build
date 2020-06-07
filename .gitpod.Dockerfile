@@ -66,9 +66,10 @@ RUN mkdir -p $ROS2_WS/src
 RUN apt-get update && apt-get install --no-install-recommends -y \
     lbzip2 \
     && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /opt/wrsdk
 ARG FILEID=1ZADI0arkz-rQT5YMu4-A4voeK7XRUcqh
-ARG FILENAME=/workspace/wrsdk-vxworks7-qemu-1.7.tar.bz2
-RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=$FILEID' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$FILEID" -O $FILENAME && rm -rf /tmp/cookies.txt
-RUN tar  -C /workspace xfv $FILENAME --use-compress-program=lbzip2
+ARG FILENAME=/opt/wrsdk/wrsdk-vxworks7-qemu-1.7.tar.bz2
+RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --show-progress --no-check-certificate 'https://docs.google.com/uc?export=download&id=1ZADI0arkz-rQT5YMu4-A4voeK7XRUcqh' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ZADI0arkz-rQT5YMu4-A4voeK7XRUcqh" -O $FILENAME && rm -rf /tmp/cookies.txt
+RUN tar xfv $FILENAME -C /opt --use-compress-program=lbzip2
 
 USER gitpod
