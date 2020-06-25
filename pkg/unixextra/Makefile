@@ -58,7 +58,7 @@ unixextra.build : unixextra.configure
 	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR) && \
 	export MAKEFLAGS='$(FILTERED_MAKEFLAGS)' &&  \
 	echo "MAKE_OPT: $(PKG_MAKE_OPT)" && \
-	$(MAKE) -C $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR) -f $(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/Makefile $(PKG_MAKE_OPT)
+	$(AUTOTOOLS_ENV) $(MAKE) -C $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR) -f $(BUILD_DIR)/$(PKG_NAME)/$(PKG_SRC_DIR)/Makefile $(PKG_MAKE_OPT)
 	@$(MAKE_STAMP)
 
 unixextra.install : unixextra.build
