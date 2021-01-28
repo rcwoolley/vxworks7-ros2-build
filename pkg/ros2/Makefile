@@ -1,6 +1,6 @@
 # Makefile - for ros2
 #
-# Copyright (c) 2019 Wind River Systems, Inc.
+# Copyright (c) 2018-2021 Wind River Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 #
 # modification history
 # --------------------
+# 25jan21,akh  updated to foxy
 # 15nov19,rcw  created
 # 12mar18,akh  created
 #
@@ -25,17 +26,17 @@ include $(WIND_USR_MK)/defs.common.mk
 include $(WIND_USR_MK)/defs.packages.mk
 include $(WIND_USR_MK)/defs.crossbuild.mk
 
-PACKAGES += ros2
-
 PKG_NAME = ros2
-PKG_VER =  dashing
-
-#PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
-PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
+PKG_VER = foxy-release
 PKG_TYPE = git
-PKG_COMMIT_ID = dashing-release-SR0640
+PKG_VER_VXWORKS = SR0660
 
-PKG_REPO_COMMIT_ID = dashing-release
+PACKAGES += $(PKG_NAME)
+
+PKG_URL = https://github.com/Wind-River/vxworks7-layer-for-ros2.git
+PKG_COMMIT_ID = $(PKG_VER)-$(PKG_VER_VXWORKS)
+
+PKG_REPO_COMMIT_ID = $(PKG_VER)
 PKG_REPO_URL = https://raw.githubusercontent.com/ros2/ros2/${PKG_REPO_COMMIT_ID}/${PKG_NAME}.repos
 
 PKG_LICENSE = BSD
