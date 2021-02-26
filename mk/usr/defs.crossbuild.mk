@@ -18,15 +18,19 @@
 ifeq ($(__crossbuild_defs),)
 __crossbuild_defs = TRUE
 
-TGT_CONFIGURE_OPT = \
-	--build=x86_64-pc-linux-gnu \
-        --host=$(TGT_ARCH)-wrs-vxworks \
+include $(WIND_USR_MK)/defs.vxworks.mk
+include $(WIND_CC_SYSROOT)/mk/defs.autotools.mk
+
+TGT_CONFIGURE_OPT ?= \
+        --build=$(AUTOTOOLS_BUILD) \
+        --host=$(AUTOTOOLS_HOST) \
 	--prefix= \
-	--includedir=/include
+	--includedir=/include \
+        $(AUTOTOOLS_ENV)
 
-#	--bindir=/$(TOOL_SPECIFIC_DIR)/bin \
-#	--libdir=/$(TOOL_COMMON_DIR) \
+TGT_INSTALL_DIR ?= $(3PP_DEVELOP_USR_DIR)
+TGT_DEPLOY_DIR ?= $(ROOT_DIR)
+TGT_MAKE_INSTALL_OPT ?= install DESTDIR=$(TGT_INSTALL_DIR)
+TGT_CMAKE_TOOLCHAIN_FILE ?= $(WIND_CC_SYSROOT)/mk/toolchain.cmake
 
-TGT_MAKE_INSTALL_OPT = install DESTDIR=$(ROOT_DIR)
-TGT_CMAKE_TOOLCHAIN_FILE ?= $(TOP_BUILDDIR)/buildspecs/cmake/toolchain.cmake
 endif

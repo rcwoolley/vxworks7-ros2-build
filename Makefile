@@ -2,14 +2,10 @@ export TOP_BUILDDIR=$(CURDIR)
 export WIND_USR_MK=$(TOP_BUILDDIR)/mk/usr
 
 include $(WIND_USR_MK)/defs.common.mk
+# for the STAMP_DIR
 include $(WIND_USR_MK)/defs.packages.mk
-include $(WIND_USR_MK)/defs.crossbuild.mk
 
 DEFAULT_BUILD ?= sdk python unixextra asio tinyxml2 colcon ros2 turtlebot3
-
-## Add missing variablse from SDK
-export TOOL=llvm
-export TGT_ARCH=$(shell $$CC -print-target-triple -c dummy.c | sed -e 's/arm64/aarch64/g')
 
 .PHONY: clean_buildstamps
 

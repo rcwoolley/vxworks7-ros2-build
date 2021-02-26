@@ -21,6 +21,7 @@
 
 # SYNOPSIS        extra UNIX functions not included into -lunix
 include $(WIND_USR_MK)/defs.common.mk
+include $(WIND_USR_MK)/defs.vxworks.mk
 include $(WIND_USR_MK)/defs.packages.mk
 include $(WIND_USR_MK)/defs.crossbuild.mk
 
@@ -70,6 +71,18 @@ sdk.buildsys : sdk.unpack
 	@$(MAKE_STAMP)
 
 sdk.patch : sdk.buildsys
+ifneq ($(WIND_RELEASE_ID),SR0660)
+	@$(call echo_action,Applying SDK patches,$*)
+	$(call sdk_fix,$*)
+endif
+	@$(call echo_action,Applying VxWorks patches,$*)
+	$(call vxworks_fix,$*)
+ifneq ($(WIND_RELEASE_ID),SR0660)
+	@$(call echo_action,Applying Compiler patches,$*)
+	$(call compiler_fix,$*)
+	@$(call echo_action,Applying Python patches,$*)
+	$(call python_fix,$*)
+endif
 	@$(MAKE_STAMP)
 
 sdk.configure : sdk.patch
@@ -79,19 +92,10 @@ sdk.build : sdk.configure
 	@$(MAKE_STAMP)
 
 sdk.install : sdk.build
-	@$(call echo_action,Applying SDK patches,$*)
-	$(call sdk_fix,$*)
-	@$(call echo_action,Applying VxWorks patches,$*)
-	$(call vxworks_fix,$*)
-	@$(call echo_action,Applying Compiler patches,$*)
-	$(call compiler_fix,$*)
-	@$(call echo_action,Applying Python patches,$*)
-	$(call python_fix,$*)
 	@$(call echo_action,Deploying SDK artifacts,$*)
-	cp $(3PP_DEPLOY_DIR)/lib/* $(DEPLOY_DIR)/lib/.
-	cp $(3PP_DEPLOY_DIR)/usr/bin/* $(DEPLOY_DIR)/bin/.
-	cp $(3PP_DEPLOY_DIR)/usr/lib/lib*.so* $(DEPLOY_DIR)/lib/.
-	cp -r $(3PP_DEPLOY_DIR)/usr/lib/python3.8 $(DEPLOY_DIR)/lib/.
+	cp $(3PP_DEVELOP_USR_DIR)/bin/* $(DEPLOY_DIR)/bin/.
+	cp $(3PP_DEVELOP_USR_DIR)/lib/lib*.so* $(DEPLOY_DIR)/lib/.
+	cp -r $(3PP_DEVELOP_USR_DIR)/lib/python3.8 $(DEPLOY_DIR)/lib/.
 	@$(MAKE_STAMP)
 
 include $(WIND_USR_MK)/rules.packages.mk

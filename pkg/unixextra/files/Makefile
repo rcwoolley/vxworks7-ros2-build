@@ -55,6 +55,7 @@ clean:
 install:
 	install -m 644 $(srcdir)/fnmatch.h $(WIND_CC_SYSROOT)/usr/h/published/UTILS_UNIX
 	install -m 644 $(srcdir)/string.h $(WIND_CC_SYSROOT)/usr/h/published/UTILS_UNIX
-	install -m 755 libunixextra.a $(WIND_CC_SYSROOT)/usr/lib/common
-	install -m 755 libunixextra.so $(WIND_CC_SYSROOT)/usr/lib/common
+	install -m 644 libunixextra.a $(WIND_CC_SYSROOT)/usr/lib/common
+	install -m 644 libunixextra.so $(WIND_CC_SYSROOT)/usr/lib/common
+	sed -i 's/-lunix -lregex/-lunix -lunixextra -lregex/g' $(WIND_CC_SYSROOT)/cc-conf/default.conf
 

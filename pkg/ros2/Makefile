@@ -90,25 +90,29 @@ ros2.build: ros2.configure
 	cd $(BUILD_DIR)/$(PKG_NAME)/$(PKG_BUILD_DIR); \
 	export PATH=$(3PP_HOST_DIR)/bin:$(PATH); \
 	export PYTHONPATH=$(3PP_HOST_DIR)/lib/python3.8/site-packages:$(PYTHONPATH); \
-	colcon build --merge-install --install-base $(ROOT_DIR) --cmake-force-configure --packages-up-to $(PKG_PKGS_UP_TO) \
+	colcon build --merge-install --install-base $(TGT_INSTALL_DIR) --cmake-force-configure --packages-up-to $(PKG_PKGS_UP_TO) \
 		--cmake-args \
                 -DCMAKE_BUILD_TYPE:STRING=$(PKG_BUILD_TYPE) \
                 -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
 		-DCMAKE_TOOLCHAIN_FILE=$(TGT_CMAKE_TOOLCHAIN_FILE) \
+		-DCMAKE_PREFIX_PATH=$(TGT_INSTALL_DIR)
 		-DPYTHON_SOABI=cpython-38-vxworks \
                 -DBUILD_TESTING:BOOL=OFF
 	@$(MAKE_STAMP)
 
 ros2.install : ros2.build
 	@$(call echo_action,Installing runtime dependencies,$*)
-	pip3 install --ignore-installed --prefix=$(DEPLOY_DIR) setuptools
-	pip3 install --ignore-installed --prefix=$(DEPLOY_DIR) catkin_pkg
-	pip3 install --ignore-installed --prefix=$(DEPLOY_DIR) pyyaml
-	pip3 install --ignore-installed --prefix=$(DEPLOY_DIR) empy
-	cp $(ROOT_DIR)/bin/* $(DEPLOY_DIR)/bin/.
-	cp $(ROOT_DIR)/lib/lib* $(DEPLOY_DIR)/lib/.
-	cp -r $(ROOT_DIR)/lib/python3.8/* $(DEPLOY_DIR)/lib/python3.8/.
-	find $(ROOT_DIR)/lib/examples_rclcpp_minimal_* -type f -exec cp {} $(DEPLOY_DIR)/bin \;
+	pip3 install --ignore-installed --prefix=$(TGT_DEPLOY_DIR) setuptools
+	pip3 install --ignore-installed --prefix=$(TGT_DEPLOY_DIR) catkin_pkg
+	pip3 install --ignore-installed --prefix=$(TGT_DEPLOY_DIR) pyyaml
+	pip3 install --ignore-installed --prefix=$(TGT_DEPLOY_DIR) empy
+	if [ -d $(TGT_INSTALL_DIR) ]; then \
+		mkdir -p $(TGT_DEPLOY_DIR)/lib; \
+		cp -r $(TGT_INSTALL_DIR)/lib/python3.8/* $(TGT_DEPLOY_DIR)/lib/python3.8/. \;; \
+		find $(TGT_INSTALL_DIR) -name *.so* -exec install -m 644 {} $(TGT_DEPLOY_DIR)/lib/ \;; \
+		find $(TGT_INSTALL_DIR)/lib/examples_rclcpp_minimal_* -type f -exec cp {} $(TGT_DEPLOY_DIR)/$(TOOL)/bin \;; \
+		find $(TGT_INSTALL_DIR) -name *.urdf -exec install -m 755 {} $(TGT_DEPLOY_DIR)/$(TOOL)/bin/ \;; \
+	fi
 	@$(MAKE_STAMP)
 
 include $(WIND_USR_MK)/rules.packages.mk

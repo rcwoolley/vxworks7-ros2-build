@@ -22,8 +22,7 @@
 # SYNOPSIS        variables for ROS2 packages
 
 ROS2_PATCH_DIRS=eProsima/Fast-CDR \
-                eProsima/Fast-RTPS \
-                ros/class_loader \
+                eProsima/Fast-DDS \
                 ros2/console_bridge_vendor \
                 ros2/demos \
                 ros2/examples \
@@ -33,28 +32,22 @@ ROS2_PATCH_DIRS=eProsima/Fast-CDR \
                 ros2/rclpy \
                 ros2/rcutils \
                 ros2/realtime_support \
-                ros2/rmw_implementation \
                 ros2/robot_state_publisher \
                 ros2/ros2cli \
                 ros2/rosidl \
                 ros2/rosidl_defaults \
-                ros2/rosidl_typesupport \
-                ros2/tinydir_vendor \
                 ros2/rmw_fastrtps/rmw_fastrtps_shared_cpp \
                 realtime_support/tlsf_cpp
 
 # Ignore not used
 ROS_IGNORE_DIRS=ros-visualization \
 		ros2/rviz \
-                ros2/poco_vendor \
                 osrf/osrf_testing_tools_cpp \
                 ros-planning \
                 ros2/mimick_vendor \
                 ros2/realtime_support \
                 ros2/rmw_connext \
                 ros2/rosidl_typesupport_connext \
-                ros2/rmw_opensplice \
-                ros2/rosidl_typesupport_opensplice \
                 ament/ament_lint \
                 ament/uncrustify_vendor \
 		ros2/rcl_logging/rcl_logging_log4cxx \
@@ -89,7 +82,9 @@ PKG_PKGS_UP_TO=$(ROS2_EXAMPLES) \
 	$(ROS2_PYTHON_TOOLS) \
 	pendulum_control
 
+#	ros2/rosidl_typesupport \
+#	ros2/rmw_implementation \
+#       ros/class_loader \
 #	dummy_map_server \
 #	dummy_sensors \
 #	robot_state_publisher
-
