@@ -64,17 +64,13 @@ endef
 
 define pkg_configure
 	mkdir -p $(BUILD_DIR)/$(1)/$(PKG_BUILD_DIR) ; \
-	if [ -n "$(VXWORKS_ENV_SH)" ] && \
-	   [ -f $(VXWORKS_ENV_SH) ]; then \
-		. ./$(VXWORKS_ENV_SH); \
-	fi ; \
 	cd $(BUILD_DIR)/$(1)/$(PKG_SRC_DIR) && \
 	if [ -f $(BUILD_DIR)/$(1)/$(PKG_SRC_DIR)/CMakeLists.txt ]; then \
 		cd $(BUILD_DIR)/$(1)/$(PKG_BUILD_DIR) ; \
 		cmake $(BUILD_DIR)/$(1)/$(PKG_SRC_DIR) \
 		    -DCMAKE_TOOLCHAIN_FILE=$(TGT_CMAKE_TOOLCHAIN_FILE) \
-		    -DCMAKE_INSTALL_PREFIX=$(ROOT_DIR) \
-		    -DCMAKE_PREFIX_PATH=$(ROOT_DIR) \
+		    -DCMAKE_INSTALL_PREFIX=$(PKG_INSTALL_PREFIX) \
+		    -DCMAKE_PREFIX_PATH=$(PKG_INSTALL_PREFIX) \
 		    $(CMAKE_OPT) ; \
 	else \
 		if [ ! -f ./configure ] && [ -f configure.in -o -f configure.ac ] ; then \

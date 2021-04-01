@@ -21,6 +21,7 @@ __crossbuild_defs = TRUE
 include $(WIND_USR_MK)/defs.vxworks.mk
 include $(WIND_CC_SYSROOT)/mk/defs.autotools.mk
 
+# TODO rename TGT_ to PKG_ and move it to defs.packages.mk
 TGT_CONFIGURE_OPT ?= \
         --build=$(AUTOTOOLS_BUILD) \
         --host=$(AUTOTOOLS_HOST) \
@@ -29,6 +30,7 @@ TGT_CONFIGURE_OPT ?= \
         $(AUTOTOOLS_ENV)
 
 TGT_INSTALL_DIR ?= $(3PP_DEVELOP_USR_DIR)
+PKG_INSTALL_PREFIX ?=
 TGT_DEPLOY_DIR ?= $(ROOT_DIR)
 TGT_MAKE_INSTALL_OPT ?= install DESTDIR=$(TGT_INSTALL_DIR)
 TGT_CMAKE_TOOLCHAIN_FILE ?= $(WIND_CC_SYSROOT)/mk/toolchain.cmake
