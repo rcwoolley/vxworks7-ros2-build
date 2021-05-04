@@ -120,3 +120,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-pydot \
     python3-pygraphviz \
     && rm -rf /var/lib/apt/lists/*
+
+RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
+    dpkg -i libffi6_3.2.1-8_amd64.deb
