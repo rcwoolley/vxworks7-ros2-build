@@ -12,6 +12,10 @@ else
 DEFAULT_BUILD ?= sdk unixextra asio tinyxml2 colcon ros2 turtlebot3
 endif
 
+export TGT_ARCH=$(shell touch dummy.c && $$CC -print-target-triple -c dummy.c | sed -e 's/arm64/aarch64/g' | sed -e 's/-wrs-vxworks//')
+export WIND_CC_SYSROOT=${WIND_SDK_HOME}/vxsdk/sysroot
+export WIND_SDK_HOST_TOOLS=${WIND_SDK_HOME}/vxsdk/host
+
 .PHONY: clean_buildstamps
 
 all: $(DOWNLOADS_DIR) $(STAMP_DIR) $(EXPORT_DIR)
