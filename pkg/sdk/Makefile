@@ -105,7 +105,7 @@ sdk.install : sdk.build
 	$(call cmake_fix,$*)
 	@$(call echo_action,Deploying SDK artifacts,$*)
 	cp $(3PP_DEPLOY_DIR)/lib/* $(DEPLOY_DIR)/lib/.
-	cp $(3PP_DEPLOY_DIR)/usr/bin/* $(DEPLOY_DIR)/bin/.
+	cp -r $(3PP_DEPLOY_DIR)/usr/bin/* $(DEPLOY_DIR)/bin/.
 	cp $(3PP_DEPLOY_DIR)/usr/lib/lib*.so* $(DEPLOY_DIR)/lib/.
 	cp -r $(3PP_DEPLOY_DIR)/usr/lib/python3.* $(DEPLOY_DIR)/lib/.
 	@$(MAKE_STAMP)
