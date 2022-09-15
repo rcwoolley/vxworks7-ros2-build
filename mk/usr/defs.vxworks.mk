@@ -23,11 +23,16 @@ ifeq ($(__vxworks_defs),)
 __vxworks_defs = TRUE
 
 ifeq ($(WIND_CC_SYSROOT),)
+ifneq ($(WIND_SDK_HOME),)
+export WIND_CC_SYSROOT=${WIND_SDK_HOME}/vxsdk/sysroot
+export WIND_SDK_HOST_TOOLS=${WIND_SDK_HOME}/vxsdk/host
+else
 ifeq ($(WIND_SDK_CC_SYSROOT),)
 $(error WIND_CC_SYSROOT is not set, please source the environment)
 else
 export WIND_CC_SYSROOT=$(WIND_SDK_CC_SYSROOT)
 export WIND_SDK_HOST_TOOLS=$(WIND_SDK_HOME)/vxsdk/host
+endif
 endif
 endif
 
