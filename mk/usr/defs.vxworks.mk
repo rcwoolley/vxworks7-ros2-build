@@ -45,7 +45,11 @@ ifeq ($(WIND_RELEASE_ID),)
 	WIND_RELEASE_ID=SR0640
 	TGT_PYTHON_MINOR=8
 else
+ifeq ($(WIND_RELEASE_ID),21.03)
+        TGT_PYTHON_MINOR=8
+else
         TGT_PYTHON_MINOR=9
+endif
 endif
 export WIND_RELEASE_ID
 export TGT_PYTHON_MINOR
